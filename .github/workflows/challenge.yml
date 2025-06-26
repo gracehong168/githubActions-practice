@@ -1,0 +1,29 @@
+name: Challenge Workflow with if Conditionals
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  conditional-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only runs on release branch
+        if: github.ref == 'refs/heads/release'
+        run: echo "This is the release branch"
+
+      - name: Only runs on pull_request
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Pull Request Title: ${{ github.event.pull_request.title }}"
+          echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
+
+      - name: Only runs if a specific file is changed
+        if: contains(github.event.head_commit.message, 'run-tests')
+        run: echo "Executing tests as requested..."        
+
+      - name: Verify if the actor is the repository owner
+        if: github.actor == github.repository_owner
+        run: |
+          echo "Verified: Workflow triggered by the repository owner '${{ github.repository_owner }}'."        
